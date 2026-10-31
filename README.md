@@ -4,8 +4,7 @@ ESPHome firmware that streams an I2S ADC line input to Music Assistant as a
 Sendspin source. The Music Assistant Sendspin Source plugin shows the device as
 a Live Input.
 
-**Status:** this configuration compiles with ESPHome 2026.10.0. It has not yet
-been run on the board or tested with Music Assistant.
+**Status:** working on the board below, built with ESPHome 2026.10.1.
 
 ## Hardware
 
@@ -26,7 +25,7 @@ board.
 ## Build
 
 1. Copy `secrets.yaml.example` to `secrets.yaml` and fill it in.
-2. Run `esphome run esp32p4-wifi6-sendspin-source-claude1.yaml`. The first flash
+2. Run `esphome run esp32p4-wifi6-sendspin-source-claude2.yaml`. The first flash
    has to be over USB.
 
 ## Pairing

@@ -1,5 +1,7 @@
 # Board: Waveshare ESP32-P4-WIFI6-DEV-KIT (ESP32-P4 v3.1, 16 MB Flash, 32 MB PSRAM Hex)
 # WiFi runs on the on-board ESP32-C6 co-processor, connected over SDIO.
+# Same Sendspin source setup as esp32s3-n16r8-sendspin-source-claude4.yaml. Only the
+# board-specific settings differ, and the Wi-Fi status LED is left out.
 #
 # Line-in source only: streams an I2S ADC to Music Assistant as a Sendspin
 # source (Sendspin Source plugin -> Live Input). No DAC / playback.
