@@ -1,0 +1,133 @@
+# Board: Waveshare ESP32-P4-WIFI6-DEV-KIT (ESP32-P4 v3.1, 16 MB Flash, 32 MB PSRAM Hex)
+# WiFi runs on the on-board ESP32-C6 co-processor, connected over SDIO.
+#
+# Line-in source only: streams an I2S ADC to Music Assistant as a Sendspin
+# source (Sendspin Source plugin -> Live Input). No DAC / playback.
+
+substitutions:
+  name: sendspin-esp32p4wifi6
+  friendly_name: Sendspin ESP32P4 WiFi6
+
+## SETTINGS ######################################################################################################################################
+
+  # Line-in level that counts as "signal present" (dBFS), used to start/stop the
+  # Music Assistant Live Input automatically
+  line_in_signal_threshold: "-50"
+
+## END OF SETTINGS ###############################################################################################################################
+esphome:
+  name: ${name}
+  friendly_name: ${friendly_name}
+  min_version: 2026.10.0
+  name_add_mac_suffix: false
+  project:
+    name: esp32p4wifi6.sendspin
+    version: 2026.10.0
+
+esp32:
+  variant: ESP32P4
+  engineering_sample: false
+  flash_size: 16MB
+  framework:
+    type: esp-idf
+  # This chip (v3.1) builds at 400 MHz even when 360MHZ is set here.
+  # ESPHome warns that 400 MHz is experimental.
+  cpu_frequency: 400MHZ
+
+psram:
+  mode: hex
+  speed: 200MHz
+
+# Console is the board's USB-UART port (GPIO37/38)
+logger:
+  level: warn
+  hardware_uart: UART0
+
+api:
+  encryption:
+    key: !secret api_encryption_key
+ota:
+  - platform: esphome
+
+# Link to the ESP32-C6, pins from the board's schematic
+esp32_hosted:
+  type: sdio
+  variant: ESP32C6
+  reset_pin: GPIO54
+  cmd_pin: GPIO19
+  clk_pin: GPIO18
+  d0_pin: GPIO14
+  d1_pin: GPIO15
+  d2_pin: GPIO16
+  d3_pin: GPIO17
+  active_high: true
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+  # Keep the radio awake: the default (LIGHT) power save throttles the steady
+  # ~1.5 Mbit/s PCM upload and fills the Sendspin capture buffer
+  power_save_mode: none
+  ap:
+
+improv_serial:
+
+# Local copy of ESPHome 2026.10.0's sendspin component with the Sendspin source
+# role turned on, plus sendspin_source, which streams the line-in ADC to
+# Music Assistant (Sendspin Source plugin -> Live Input).
+external_components:
+  - source:
+      type: local
+      path: components
+    components: [sendspin, sendspin_source]
+
+sendspin:
+  id: sendspin_hub
+  # Music Assistant only accepts a source from a paired device. Enter this
+  # 8-digit code in Music Assistant when it asks to pair. Add it to secrets.yaml:
+  #   sendspin_pairing_code: "12345678"
+  static_pairing_code: !secret sendspin_pairing_code
+
+# I2S port for the line-in ADC. Don't use GPIO6 for this: it also connects to
+# the ESP32-C6's IO2 through R77.
+i2s_audio:
+  - id: i2s_adc_bus
+    i2s_lrclk_pin: GPIO20
+    i2s_bclk_pin: GPIO4
+    i2s_mclk_pin: GPIO3
+
+microphone:
+  - platform: i2s_audio
+    id: line_in_adc
+    i2s_audio_id: i2s_adc_bus
+    adc_type: external
+    i2s_din_pin: GPIO5
+    channel: stereo
+    sample_rate: 48000
+    bits_per_sample: 32bit
+
+sendspin_source:
+  id: line_in_source
+  microphone:
+    microphone: line_in_adc
+    channels: [0, 1]
+  sample_rate: 48000
+  line_sense: true
+  signal_threshold: ${line_in_signal_threshold}
+  signal_off_delay: 10s
+
+button:
+  - platform: restart
+    id: restart_button
+    name: "Restart"
+    entity_category: config
+    icon: "mdi:restart"
+
+  # Press if Music Assistant asks you to confirm pairing on the device
+  - platform: template
+    id: sendspin_pair_button
+    name: "Sendspin Pair"
+    entity_category: config
+    icon: "mdi:link-variant"
+    on_press:
+      - sendspin.confirm_pairing_window:
