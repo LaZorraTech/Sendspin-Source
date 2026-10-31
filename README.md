@@ -4,6 +4,8 @@ ESPHome firmware that streams an I2S ADC line input to Music Assistant as a
 Sendspin source. The Music Assistant Sendspin Source plugin shows the device as
 a Live Input.
 
+Look for the Sendspin Source in Music Assistant under Explore -> Browse.
+
 **Status:** working on the board below, built with ESPHome 2026.10.1.
 
 ## Hardware
