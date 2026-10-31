@@ -22,6 +22,9 @@ The P4 generates all ADC clocks: MCLK = 256 x fs, BCK = 64 x fs, 48 kHz, I2S
 format. Don't use GPIO6 for WS, because it also connects to the C6's IO2 on this
 board.
 
+Board = https://www.waveshare.com/esp32-p4-wifi6-dev-kit.htm
+ADC = 
+
 ## Build
 
 1. Copy `secrets.yaml.example` to `secrets.yaml` and fill it in.
