@@ -23,7 +23,8 @@ format. Don't use GPIO6 for WS, because it also connects to the C6's IO2 on this
 board.
 
 Board = https://www.waveshare.com/esp32-p4-wifi6-dev-kit.htm
-ADC = 
+
+ADC = https://www.amazon.com/dp/B0DFLVH3QL
 
 ## Build
 
@@ -34,8 +35,8 @@ ADC =
 ## Pairing
 
 Music Assistant only accepts a source from a paired device. Open the device's
-player settings in Music Assistant, press Setup and enter
-`sendspin_pairing_code`, then press **Sendspin Pair** in Home Assistant.
+player settings in Music Assistant, press Setup, then press **Sendspin Pair** in Home Assistant and enter
+`sendspin_pairing_code` in Music Assistant.
 
 ## Components
 
